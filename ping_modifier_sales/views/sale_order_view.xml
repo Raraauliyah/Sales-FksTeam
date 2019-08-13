@@ -1,0 +1,111 @@
+<odoo>
+    <!-- Inherit Form View to Modify it -->
+    <record id="edit_sale_order_view_form" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+<!--             <xpath expr="//div[@name='button_box']" position="inside">-->
+<!--                    <field name="working_so_ids" invisible="1" can_create="false" can_write="false"/>-->
+<!--                    <button type="object" name="action_view_work_schedule" class="oe_stat_button" icon="fa-pencil-square-o"-->
+<!--                            attrs="{'invisible': [('working_schedule_count', '=', 0)]}" >-->
+<!--                        <field name="working_schedule_count" widget="statinfo" string="Working Schedule(s)"/>-->
+<!--                    </button>-->
+<!--            </xpath>-->
+            <xpath expr="//button[@name='action_confirm']" position="after">
+<!--                <field name="working_so_line_ids" invisible="1"/>-->
+                <button name="working_so_modifications" string="Start Working"
+	                        type="object" class="btn-primary"
+	                        attrs="{'invisible': ['|',('state', '!=', 'sale'),('state_ws', '!=','pending')]}"/>
+
+                <button string="Start" name="start_section" attrs="{'invisible': [('state_ws', '!=','paused')]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
+                <button string="Pause" name="pause_section" attrs="{'invisible': [('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="sales_team.group_sale_manager"/> <!-- groups="base.group_system"/-->
+                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ('progress','paused'))]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="before">
+                <button string="Re-assign Operator" name="action_assign_operator" states='sale' type="object" class="oe_highlight" groups="sales_team.group_sale_manager"/><!--  groups="base.group_system" -->
+            </xpath>
+            <xpath expr="//field[@name='confirmation_date']" position="after">
+                <field name="operator_id" readonly="1"/>
+                <field name="state_ws" readonly="1"/>
+                <field name="source_seq_id" attrs="{'readonly': [('state', '!=','draft')]}" widget="selection"/>
+                <field name="previous_orders" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook/page[2]" position="after">
+                <page string="Working Schedule">
+                    <group>
+                        <field name="duration" widget="sale_order_time_counter"/>
+                        <field name="is_user_working" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="working_so_line_ids" readonly="1" context="{'default_operator_id':operator_id}">
+                            <tree editable="bottom" create="0" delete="0" edit="0">
+                                <field name="start_time"/>
+                                <field name="end_time"/>
+                                <field name="duration" widget="float_time"/>
+                                <field name="operator_id"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_quotation_tree_date" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="state_ws" string="Scheduler Status"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_order_tree_date" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="state_ws" string="Scheduler Status"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_operator_transfer" model="ir.actions.act_window">
+        <field name="name">Transfers</field>
+        <field name="res_model">stock.picking</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form,calendar</field>
+        <field name="domain"></field>
+        <field name="context">{
+                'contact_display': 'partner_address',
+        }
+        </field>
+        <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to create a stock operation.
+          </p><p>
+            Most operations are prepared automatically by Odoo according
+            to your preconfigured logistics rules, but you can also record
+            manual stock movements.
+          </p>
+        </field>
+    </record>
+
+    <record id="action_operator_sale_order" model="ir.actions.act_window">
+        <field name="name">Sales Orders</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="context">{"create" : False,"edit":True}</field>
+        <field name="domain">[('operator_id', '=', uid)]</field>
+    </record>
+
+    <menuitem id="operator_main_main" name="Operator" parent="sales_team.menu_base_partner"/><!-- groups="ping_modifier_sales.group_assign_operator"/>-->
+    <menuitem id="operator_main_inventory" name="Internal Transfer" parent="operator_main_main" action="action_operator_transfer"/>
+    <menuitem id="operator_main_sales" name="Sale Orders " parent="operator_main_main" action="action_operator_sale_order"/>
+</odoo>

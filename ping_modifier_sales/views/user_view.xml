@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+        <record id="view_user_form_extended" model="ir.ui.view">
+            <field name="name">res.user.form.extended</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <field name="count_confirmed_orders_today" invisible="1"/>
+                </xpath>
+                <xpath expr="//notebook/page[2]" position="after">
+                    <page string="Operator">
+                        <group>
+                            <group>
+                                <field name="operator" groups="base.group_erp_manager"/>
+                            </group>
+                            <group>
+                                <field name="manage_operator" groups="base.group_erp_manager"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="working_schedule_ids" attrs="{'readonly': [('manage_operator', '=', False)]}">
+                                <tree editable="bottom">
+                                    <field name="used_operator" invisible="1"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="day"/>
+                                    <field name="time_scedule_from" widget="float_time"/>
+                                    <field name="time_scedule_to" widget="float_time"/>
+                                    <field name="status"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

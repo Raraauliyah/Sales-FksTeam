@@ -1,0 +1,87 @@
+<odoo>
+    <record id="view_workin_so" model="ir.ui.view">
+        <field name="name">working_so_view_form</field>
+        <field name="model">working.so</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                    <button string="Start" name="start_section" states="pending,paused" type="object" class="oe_highlight" groups="base.group_user"/>
+                    <button string="pause" name="pause_section" states="progress" type="object" class="oe_highlight" groups="base.group_user"/>
+                    <button string="complete" name="complete_section" states="progress,paused" type="object" class="oe_highlight" groups="base.group_user"/>
+                </header>
+                <group>
+                    <field name="so_id" readonly="1"/>
+                    <field name="duration"/>
+                    <field name="operator_id" invisible="1"/>
+                </group>
+                <group>
+                    <field name="working_so_line_ids" readonly="1" context="{'default_operator_id':operator_id}">
+                        <tree editable="bootom" create="0" delete="0" edit="0">
+                            <field name="start_time"/>
+                            <field name="end_time"/>
+                            <field name="duration"/>
+                            <field name="operator_id"/>
+                        </tree>
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+
+   <record model="ir.ui.view" id="tree_view_workin_so">
+        <field name="name">working_so_tree_view</field>
+        <field name="model">working.so</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="so_id"/>
+                <field name="duration"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_working_so_view">
+            <field name="name">Workin So Action</field>
+            <field name="res_model">working.so</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+        </record>
+
+
+
+    <record id="select_operator_form_view" model="ir.ui.view">
+        <field name="name">operator.select.form</field>
+        <field name="model">assign.operator</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="operator_bool" invisible="1"/>
+                    <field name="operator_id" string="Active Operator" required="1"/>
+                </group>
+                <footer>
+                    <button name="assign_operator" string="Assign Operator" type="object"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="previous_orders_form_view" model="ir.ui.view">
+        <field name="name">previous.sale.orders.form</field>
+        <field name="model">previous.sale.orders</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <b>This may be double order please check the below SO</b>
+                </group>
+                <group>
+                    <field name='sale_order_id' string="Sale Order" readonly="1"/>
+                </group>
+                <footer>
+                    <button name="approve_sale_order" string="Confim SO" type="object"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

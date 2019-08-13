@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="source_seq_data" model="ir.sequence">
+            <field name="name">Source Sequence Data</field>
+            <field name="code">source.sequence</field>
+            <field name="padding">3</field>
+        </record>
+    </data>
+</odoo>

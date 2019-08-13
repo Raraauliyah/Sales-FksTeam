@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_source_sequence,ping_modifier_sales.access_source_sequence_model,model_source_sequence,,1,1,1,1
+access_working_schedule_line,working_schedule_line,model_working_schedule_line,,1,1,1,1
+access_working_so_line,working_so_line,model_working_so_line,,1,1,1,1
+access_working_source_seq_gen,working_so_line_source_gen,model_source_sequence_gen,,1,1,1,1
+access_assign_operator,action_name_assign_operator,model_assign_operator,,1,1,1,1
+access_previous_sale_orders,action_previous_sale_orders,model_previous_sale_orders,,1,1,1,1

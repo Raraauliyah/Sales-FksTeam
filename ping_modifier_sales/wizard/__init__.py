@@ -1,0 +1,1 @@
+from . import claim_point_wiz

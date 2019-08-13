@@ -1,0 +1,47 @@
+<odoo>
+    <record id="view_sale_claim_point" model="ir.ui.view">
+        <field name="name">sale claim point</field>
+        <field name="model">sale.claim.points</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="qty"/>
+                    <field name="unit_price"/>
+                </group>
+                <group>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="point_pos"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+   <record model="ir.ui.view" id="tree_view_sale_claim_point">
+        <field name="name">sale claim point</field>
+        <field name="model">sale.claim.points</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="unit_price"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="point_pos"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_claim_point" model="ir.actions.act_window">
+        <field name="name">Sale Claim Point</field>
+        <field name="res_model">sale.claim.points</field>
+<!--        <field name="context">{}</field>-->
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Claim Point" id="claim_point_menu" action="action_claim_point" parent="sales_team.menu_sale_config" sequence="100"/>
+</odoo>

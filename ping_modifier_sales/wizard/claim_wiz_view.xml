@@ -1,0 +1,20 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="claim_point_wiz_view">
+            <field name="name">claim.point.wiz.view.form</field>
+            <field name="model">claim.point.wiz</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="partner_id" invisible="1"/>
+                        <field name="claim_point_id" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="apply" string="Apply" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

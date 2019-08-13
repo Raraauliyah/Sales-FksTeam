@@ -1,0 +1,66 @@
+<odoo>
+
+    <record id="source_seq_form" model="ir.ui.view">
+        <field name="name">source sequence form</field>
+        <field name="model">source.sequence</field>
+        <field name="arch" type="xml">
+            <form string="Source Sequence">
+                <sheet>
+                    <group>
+                        <field name="name" readonly="0"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="source_seq_tree" model="ir.ui.view">
+        <field name="name">source sequence tree</field>
+        <field name="model">source.sequence</field>
+        <field name="arch" type="xml">
+            <tree string="Source Sequence">
+                <field name="name" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="source_seq_action">
+        <field name="name">Source</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">source.sequence</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+<!--        <field name="view_id" ref="source_seq_tree"/>-->
+    </record>
+    <menuitem id="source_seq_main_main" name="Source" parent="sales_team.menu_sale_config" action="source_seq_action"/>
+
+    <!-- <record id="source_seq_gen_form" model="ir.ui.view">
+        <field name="name">source sequence tree</field>
+        <field name="model">source.sequence.gen</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="prefix"/>
+                        <field name="from_seq" digits="(16, 4)"/>
+                    </group>
+                    <group>
+                        <field name="to_seq" digits="(16, 4)"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="generate_sequence" string="Generate Sequence" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="source_seq_gen_action">
+        <field name="name">Source Sequence Generate</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">source.sequence.gen</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="source_seq_gen_form"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="source_seq_gen_main" name="Source Sequence Generate" parent="sales_team.menu_sale_config" action="source_seq_gen_action"/> -->
+</odoo>
