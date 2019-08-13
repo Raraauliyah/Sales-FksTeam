@@ -166,8 +166,8 @@ class SaleOrder(models.Model):
         three_hours_period = (datetime.now().replace(microsecond=0)) - timedelta(hours=3)
         orders = (self.env['sale.order'].search(
             [('state', '=', 'sale'), ('id', '!=', self.id), ('partner_id', '=', self.partner_id.id),
-             ('confirmation_date', '>=', str(three_hours_period))]))
-
+            ('confirmation_date', '>=', str(three_hours_period))]))
+            
         if orders and self.previous_orders:
             if orders:
                 orders=sorted(orders, key=lambda x: (x.confirmation_date))
@@ -183,6 +183,7 @@ class SaleOrder(models.Model):
                     'type': 'ir.actions.act_window',
                 }
         else:
+            self.action_active_users()
             res = super(SaleOrder, self).action_confirm()
             return res
 
@@ -225,11 +226,10 @@ class SaleOrder(models.Model):
         })
 
     @api.multi
-    def action_confirm(self):
+    def action_active_users(self):
         for user in self.env['res.users'].search([('active','=',True),('operator','=',True)]):
             user.compute_count_confirmed_orders_today()
 
-        res = super(SaleOrder,self).action_confirm()
         operators = self.env['res.users'].search([('active','=',True),('operator','=',True)])
         active_operators = []
         for operator in operators:
@@ -258,7 +258,6 @@ class SaleOrder(models.Model):
         self.so_balanced_assignment(active_operators)
         for user in self.env['res.users'].search([('active','=',True),('operator','=',True)]):
             user.compute_count_confirmed_orders_today()
-        return res
 
     @api.multi
     def so_balanced_assignment(self, active_operators):
