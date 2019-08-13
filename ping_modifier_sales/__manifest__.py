@@ -16,7 +16,7 @@
     ],
     "data": [
         'views/so_templates.xml',
-        # 'security/security.xml',
+        'security/security.xml',
         'data/data.xml',
         'security/ir.model.access.csv',
         'views/sale_order_view.xml',
