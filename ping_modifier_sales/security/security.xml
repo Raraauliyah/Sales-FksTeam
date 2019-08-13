@@ -3,7 +3,7 @@
 <odoo>
 
     <record id="group_assign_operator" model="res.groups">
-        <field name="name">Sale / Operator</field>
+        <field name="name">Operator Sales Order</field>
         <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
     </record>
 
