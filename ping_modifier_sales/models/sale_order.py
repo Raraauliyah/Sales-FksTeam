@@ -183,8 +183,8 @@ class SaleOrder(models.Model):
                     'type': 'ir.actions.act_window',
                 }
         else:
-            self.action_active_users()
             res = super(SaleOrder, self).action_confirm()
+            self.action_active_users()
             return res
 
 
