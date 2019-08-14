@@ -246,6 +246,15 @@ class SaleOrder(models.Model):
         if working_so_lines:
             working_so_lines[-1].update({'end_time': datetime.today()})
         self.state_ws = 'completed'
+        self.maintain_todays_sales()
+
+    @api.multi
+    def maintain_todays_sales(self):
+        self.ensure_one()
+        if self.state_ws and self.state_ws == 'completed' and self.date_order and self.confirmation_date and \
+            str(self.date_order).split(" ")[0] == str(self.confirmation_date).split(" ")[0]:
+            self.operator_id.count_confirmed_orders_today -= 1
+
 
     @api.multi
     def start_section(self):
