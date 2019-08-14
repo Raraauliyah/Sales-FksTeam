@@ -102,7 +102,7 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
         <field name="context">{"create" : False,"edit":True}</field>
-        <!-- <field name="domain">[('operator_id', '=', uid), ('state', '=', 'sale')]</field> -->
+        <field name="domain">[('operator_id', '=', uid), ('state', '=', 'sale')]</field>
     </record>
 
     <menuitem id="operator_sales_main_main" name="Operator Sales" groups="ping_modifier_sales.group_assign_operator" sequence="6"/>
