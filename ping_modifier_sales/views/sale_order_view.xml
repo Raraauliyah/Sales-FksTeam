@@ -19,7 +19,7 @@
 
                 <button string="Start" name="start_section" attrs="{'invisible': [('state_ws', '!=','paused')]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
                 <button string="Pause" name="pause_section" attrs="{'invisible': [('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
-                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ('progress','paused'))]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
+                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ('progress','paused'))]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
             </xpath>
             <xpath expr="//button[@name='action_cancel']" position="before">
                 <button string="Re-assign Operator" name="action_assign_operator" states='sale' type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
