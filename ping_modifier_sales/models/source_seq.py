@@ -45,3 +45,11 @@ class SourceSequence(models.Model):
     #     vals['prefix'] = name
     #     vals['padding'] = 3
     #     return ir_seq.create(vals)
+
+
+class IrSequence(models.Model):
+    _inherit = 'ir.sequence'
+
+    custom_source = fields.Boolean(
+        string='Custom Source'
+    )

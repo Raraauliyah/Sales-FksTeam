@@ -8,7 +8,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="sequence_id"/>
+                        <field name="sequence_id" domain="[('custom_source', '=', True)]"/>
                     </group>
                 </sheet>
             </form>
@@ -33,4 +33,19 @@
 <!--        <field name="view_id" ref="source_seq_tree"/>-->
     </record>
     <menuitem id="source_seq_main_main" name="Source" parent="sales_team.menu_sale_config" action="source_seq_action"/>
+
+    <!-- ir.sequence inherit form view -->
+    <record id="sequence_view" model="ir.ui.view">
+        <field name="name">ir.sequence.inherit.view.form</field>
+        <field name="model">ir.sequence</field>
+        <field name="inherit_id" ref="base.sequence_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="before">
+                <field name="custom_source"/>
+            </xpath>
+            <xpath expr="//field[@name='code']" position="attributes">
+                <attribute name="attrs">{'invisible': [('custom_source', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
 </odoo>

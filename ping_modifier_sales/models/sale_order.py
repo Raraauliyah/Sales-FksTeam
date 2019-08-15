@@ -138,7 +138,6 @@ class SaleOrder(models.Model):
                     now = datetime.now(op_tz).time() 
                     day = ws.day
                     status = ws.status
-
                     if start_date <= datetime.now() and datetime.now() <= end_date and day == datetime.now(op_tz).strftime('%A').lower()\
                         and work_from <= now and now <= work_to and status=='active':
                         active_operators.append(ws.user_id)
