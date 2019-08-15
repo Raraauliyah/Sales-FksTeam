@@ -18,6 +18,8 @@ class AssignOperator(models.Model):
         operator_user = self.find_operator()
         if operator_user:
             return {'domain':{'operator_id': [('id', 'in',operator_user )]}}
+        else:
+            return {'domain':{'operator_id': [('id', '=', '0')]}}
 
 
     @api.multi
@@ -25,6 +27,8 @@ class AssignOperator(models.Model):
         operator_user = self.find_operator()
         if operator_user:
             return {'domain':{'operator_id': [('id', 'in',operator_user )]}}
+        else:
+            return {'domain':{'operator_id': [('id', '=', '0')]}}
 
     @api.multi
     def assign_operator(self):

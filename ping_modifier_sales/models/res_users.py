@@ -14,14 +14,13 @@ class ResUsers(models.Model):
     @api.multi
     def compute_count_confirmed_orders_today(self):
         sobj = self.env['sale.order']
-        for rec in self:
-            rec.count_confirmed_orders_today = 0
-            orders = sobj.search([('operator_id', '=', rec.id), ('state', '=', 'sale')])
-            for order in orders:
-                confirmation_date = order.confirmation_date.split(' ')[0]
-                today = datetime.today().strftime('%Y-%m-%d')
-                if today == confirmation_date:
-                    rec.count_confirmed_orders_today += 1
+        self.count_confirmed_orders_today = 0
+        orders = sobj.search([('operator_id', '=', self.id), ('state', '=', 'sale'), ('state_ws', '!=', 'completed')])
+        for order in orders:
+            confirmation_date = order.confirmation_date.split(' ')[0]
+            today = datetime.today().strftime('%Y-%m-%d')
+            if today == confirmation_date:
+                self.count_confirmed_orders_today += 1
 
 
 class WorkingScheduleLine(models.Model):

@@ -246,15 +246,7 @@ class SaleOrder(models.Model):
         if working_so_lines:
             working_so_lines[-1].update({'end_time': datetime.today()})
         self.state_ws = 'completed'
-        self.maintain_todays_sales()
-
-    @api.multi
-    def maintain_todays_sales(self):
-        self.ensure_one()
-        if self.state_ws and self.state_ws == 'completed' and self.date_order and self.confirmation_date and \
-            str(self.date_order).split(" ")[0] == str(self.confirmation_date).split(" ")[0]:
-            self.operator_id.count_confirmed_orders_today -= 1
-
+        self.operator_id.compute_count_confirmed_orders_today()
 
     @api.multi
     def start_section(self):
@@ -288,9 +280,10 @@ class SaleOrder(models.Model):
     def create(self, vals):
         # import pdb;pdb.set_trace()
         if vals.get('source_seq_id'):
-            source = vals.get('source_seq_id')
-            source_name = self.env['source.sequence'].search([('id', '=', source)], limit=1).name
-            ir_seq = self.env['ir.sequence'].search([('prefix', '=', source_name)], limit=1)
+            source_seq_id = vals.get('source_seq_id')
+            source = self.env['source.sequence'].search([('id', '=', source_seq_id)], limit=1).sequence_id.id
+            # source_name = self.env['source.sequence'].search([('id', '=', source)], limit=1).name
+            ir_seq = self.env['ir.sequence'].search([('id', '=', source)], limit=1)
             if ir_seq:
                 vals['name'] = ir_seq.next_by_id() or _('New')
                 vals['sequence'] = vals['name']
