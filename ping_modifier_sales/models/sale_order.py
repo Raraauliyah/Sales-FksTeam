@@ -175,6 +175,8 @@ class SaleOrder(models.Model):
             self.partner_id.update({'trust':'bad','cancel_counts':0})
         if self.partner_id.cancel_counts == -3:
             self.partner_id.update({'trust':'good','cancel_counts':0})
+        if self.state='sale':
+            self.operator_id.compute_count_confirmed_orders_today()
         return res
 
     @api.multi
