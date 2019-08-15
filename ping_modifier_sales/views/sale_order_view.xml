@@ -19,7 +19,7 @@
 
                 <button string="Start" name="start_section" attrs="{'invisible': [('state_ws', '!=','paused')]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
                 <button string="Pause" name="pause_section" attrs="{'invisible': [('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
-                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ('progress','paused'))]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
+                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', '=', 'completed')]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
             </xpath>
             <xpath expr="//button[@name='action_cancel']" position="before">
                 <button string="Re-assign Operator" name="action_assign_operator" states='sale' type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
@@ -27,7 +27,7 @@
             <xpath expr="//field[@name='confirmation_date']" position="after">
                 <field name="operator_id" readonly="1"/>
                 <field name="state_ws" readonly="1"/>
-                <field name="source_seq_id" attrs="{'readonly': [('state', '!=','draft')]}" widget="selection"/>
+                <field name="source_seq_id" attrs="{'readonly': [('state', '!=','draft')]}" required="1" widget="selection"/>
                 <field name="previous_orders" invisible="1"/>
             </xpath>
             <xpath expr="//notebook/page[2]" position="after">

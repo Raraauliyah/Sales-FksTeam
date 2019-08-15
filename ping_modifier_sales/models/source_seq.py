@@ -8,7 +8,7 @@ class SourceSequence(models.Model):
     _rec_name = 'name'
 
     name = fields.Char(
-        string='Source Sequence',
+        string='Source Name',
         required=True,
         copy=False,
     )
