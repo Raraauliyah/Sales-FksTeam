@@ -25,9 +25,9 @@ class SourceSequence(models.Model):
         ('name_uniq', 'unique (name,sequence_id)', 'Name and sequence must be unique.')
     ]
 
-    @api.multi
-    def unlink(self):
-        raise UserError(_("This record can not be deleted!"))
+    # @api.multi
+    # def unlink(self):
+    #     raise UserError(_("This record can not be deleted!"))
 
     # @api.model
     # def create(self, vals):

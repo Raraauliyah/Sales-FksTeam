@@ -19,10 +19,10 @@
 
                 <button string="Start" name="start_section" attrs="{'invisible': [('state_ws', '!=','paused')]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
                 <button string="Pause" name="pause_section" attrs="{'invisible': [('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
-                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', '=', 'completed')]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
+                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ['progress','paused'])]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
             </xpath>
             <xpath expr="//button[@name='action_cancel']" position="before">
-		<button string="Re-assign Operator" name="action_assign_operator" attrs="{'invisible': ['|',('state_ws', '=', 'completed'), ('state', '!=', 'sale')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
+		<button string="Re-assign Operator" name="action_assign_operator" attrs="{'invisible': ['|', ('state_ws', '=', 'completed'), ('state', '!=', 'sale')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
             </xpath>
             <xpath expr="//field[@name='confirmation_date']" position="after">
                 <field name="operator_id" readonly="1"/>
@@ -71,12 +71,12 @@
         </field>
     </record>
 
-    <record id="action_operator_transfer" model="ir.actions.act_window">
-        <field name="name">Transfers</field>
-        <field name="res_model">stock.picking</field>
+    <!-- <record id="action_operator_transfer" model="ir.actions.act_window">
+        <field name="name">Internal Transfers</field>
+        <field name="res_model">internal.transfer</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,kanban,form,calendar</field>
+        <field name="view_mode">tree,form</field>
         <field name="domain"></field>
         <field name="context">{
                 'contact_display': 'partner_address',
@@ -91,6 +91,18 @@
             to your preconfigured logistics rules, but you can also record
             manual stock movements.
           </p>
+        </field>
+    </record> -->
+
+    <record model="ir.actions.act_window" id="action_operator_internal_transfer">
+        <field name="name">Internal Transfer</field>
+        <field name="res_model">internal.transfer</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{
+                'contact_display': 'partner_address',
+        }
         </field>
     </record>
 
@@ -108,6 +120,6 @@
     <menuitem id="operator_sales_main_main" name="Operator Sales" groups="ping_modifier_sales.group_assign_operator" sequence="6"/>
 
     <menuitem id="operator_main_main" name="Operator" parent="ping_modifier_sales.operator_sales_main_main"/> <!--parent="sales_team.menu_base_partner"-->
-    <menuitem id="operator_main_inventory" name="Internal Transfer" parent="operator_main_main" action="action_operator_transfer"/>
+    <menuitem id="operator_main_inventory" name="Internal Transfer" parent="operator_main_main" action="action_operator_internal_transfer"/>
     <menuitem id="operator_main_sales" name="Sale Orders " parent="operator_main_main" action="action_operator_sale_order"/>
 </odoo>
