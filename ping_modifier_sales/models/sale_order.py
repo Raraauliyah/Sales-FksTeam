@@ -171,7 +171,7 @@ class SaleOrder(models.Model):
     def action_cancel(self):
         res = super(SaleOrder,self).action_cancel()
         self.partner_id.cancel_counts +=1
-        if self.partner_id.cancel_counts==4:
+        if self.partner_id.cancel_counts==5:
             self.partner_id.update({'trust':'bad','cancel_counts':0})
         if self.partner_id.cancel_counts == -3:
             self.partner_id.update({'trust':'good','cancel_counts':0})
