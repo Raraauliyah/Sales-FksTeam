@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="assets_backend" name="pos_custom_sale_order assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/ping_custom_ui/static/src/js/pos.js"/>
+                <link rel="stylesheet" href="/ping_custom_ui/static/src/css/style.css" />
+            </xpath>
+        </template>
+    </data>
+</odoo>

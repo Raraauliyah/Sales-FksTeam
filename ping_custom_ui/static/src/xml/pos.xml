@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="CreateSaleOrder">
+        <!--<span class="control-button create_sale_order">-->
+            <!--Confirm-->
+        <!--</span>-->
+        <button class='button create_sale_order' id="create_sale_order" style="height:162px;padding: 5px 50px;margin-bottom: 20px;margin-left:100px" >
+            <div class='pay-circle'>
+                <i class='fa fa-chevron-right' />
+            </div>
+            Confirm
+        </button>
+    </t>
+
+    <t t-extend="ActionpadWidget">
+        <t t-jquery="div[class='actionpad']" t-operation="replace">
+        </t>
+    </t>
+    <t t-extend="NumpadWidget">
+        <t t-jquery=".numpad" t-operation="replace">
+        </t>
+    </t>
+
+</templates>
