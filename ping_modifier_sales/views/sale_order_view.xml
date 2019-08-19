@@ -21,8 +21,11 @@
                 <button string="Pause" name="pause_section" attrs="{'invisible': [('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
                 <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ['progress','paused'])]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
             </xpath>
+            <xpath expr="//field[@name='confirmation_date']" position="after">
+                <field name="cancel_date" states='cancel'/>
+            </xpath>
             <xpath expr="//button[@name='action_cancel']" position="before">
-		<button string="Re-assign Operator" name="action_assign_operator" attrs="{'invisible': ['|', ('state_ws', '=', 'completed'), ('state', '!=', 'sale')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
+		        <button string="Re-assign Operator" name="action_assign_operator" attrs="{'invisible': ['|', ('state_ws', '=', 'completed'), ('state', '!=', 'sale')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
             </xpath>
             <xpath expr="//field[@name='confirmation_date']" position="after">
                 <field name="operator_id" readonly="1"/>

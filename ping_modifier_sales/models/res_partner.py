@@ -10,5 +10,5 @@ class ResPartner(models.Model):
 
     @api.onchange('trust')
     def on_change_trust(self):
-        if self.trust:
+        if self.trust and self.trust in ['normal', 'good']:
             self.write({'cancel_counts':0})

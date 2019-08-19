@@ -54,6 +54,9 @@ class SaleOrder(models.Model):
     previous_orders = fields.Boolean(
         string='Previous Orders',default=True
     )
+    cancel_date = fields.Date(
+        string='Cancel Date'
+    )
 
     def _compute_is_user_working(self):
         """ Checks whether the current user is working """
@@ -170,24 +173,32 @@ class SaleOrder(models.Model):
     @api.multi
     def action_cancel(self):
         res = super(SaleOrder,self).action_cancel()
+        self.cancel_date = date.today()
+        today = date.today()
+        before_three_months = (date.today() - timedelta(3*365/12)).isoformat()
+        cancelled_so = self.search([('state', '=', 'cancel'), ('cancel_date', '>', before_three_months), ('cancel_date', '<=', today)])
+        self.partner_id.update({'cancel_counts': len(cancelled_so)})
+
         self.partner_id.cancel_counts +=1
-        if self.partner_id.cancel_counts==5:
+        if self.partner_id.cancel_counts >= 5:
             self.partner_id.update({'trust':'bad','cancel_counts':0})
-        if self.partner_id.cancel_counts == -3:
-            self.partner_id.update({'trust':'good','cancel_counts':0})
+        # if self.partner_id.cancel_counts == -3:
+        #     self.partner_id.update({'trust':'good','cancel_counts':0})
         if self.state=='sale':
             self.operator_id.compute_count_confirmed_orders_today()
         return res
 
     @api.multi
     def action_confirm(self):
-        if self.partner_id.cancel_counts > 0:
-            self.partner_id.update({'cancel_counts': -1})
-        elif self.partner_id.cancel_counts <= 0:
-            count_sale = self.partner_id.cancel_counts - 1
-            self.partner_id.update({'cancel_counts': count_sale})
-        else:
-            pass
+        if self.partner_id.trust and self.partner_id.trust == 'bad':
+            raise ValidationError(_('Customer is bad debtor, Please contact the Administrator to activate'))
+        # if self.partner_id.cancel_counts > 0:
+        #     self.partner_id.update({'cancel_counts': -1})
+        # elif self.partner_id.cancel_counts <= 0:
+        #     count_sale = self.partner_id.cancel_counts - 1
+        #     self.partner_id.update({'cancel_counts': count_sale})
+        # else:
+        #     pass
         # operator = self.find_operator()
         # operator, scheduled_line = self.find_operator()
         # if operator:
@@ -244,7 +255,7 @@ class SaleOrder(models.Model):
     def complete_section(self):
         working_so_lines = self.env['working.so.line'].search([])
         working_so_lines.sorted(key=lambda r: r.start_time)
-        if working_so_lines:
+        if working_so_lines and not working_so_lines[-1].end_time:
             working_so_lines[-1].update({'end_time': datetime.today()})
         self.state_ws = 'completed'
         self.operator_id.compute_count_confirmed_orders_today()
