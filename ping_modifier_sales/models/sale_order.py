@@ -176,7 +176,12 @@ class SaleOrder(models.Model):
         self.cancel_date = date.today()
         today = date.today()
         before_three_months = (date.today() - timedelta(3*365/12)).isoformat()
-        cancelled_so = self.search([('state', '=', 'cancel'), ('cancel_date', '>', before_three_months), ('cancel_date', '<=', today)])
+        cancelled_so = self.search([
+            ('partner_id', '=', self.partner_id.id),
+            ('state', '=', 'cancel'),
+            ('cancel_date', '>', before_three_months),
+            ('cancel_date', '<=', today)
+        ])
         self.partner_id.update({'cancel_counts': len(cancelled_so)})
 
         self.partner_id.cancel_counts +=1
