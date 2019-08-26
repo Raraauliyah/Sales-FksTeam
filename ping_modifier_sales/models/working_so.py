@@ -56,6 +56,7 @@ class WorkingSOLine(models.Model):
     _name = 'working.so.line'
 
     so_id = fields.Many2one('sale.order')
+    line_id = fields.Many2one('sale.order.line')
     start_time = fields.Datetime('Start Time')
     end_time = fields.Datetime('End Time')
     duration = fields.Float('Duration',compute='_compute_duration', store=True)

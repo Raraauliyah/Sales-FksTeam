@@ -58,6 +58,14 @@ class SaleOrder(models.Model):
         string='Cancel Date'
     )
 
+    @api.multi
+    def refresh_view(self):
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+            'target':'main',
+        }
+
     def _compute_is_user_working(self):
         """ Checks whether the current user is working """
         for order in self:
@@ -148,7 +156,7 @@ class SaleOrder(models.Model):
 
 
     @api.one
-    @api.depends('state_ws', 'working_so_line_ids.duration')
+    @api.depends('state_ws', 'working_so_line_ids.duration', 'order_line.line_state_ws')
     def _compute_duration(self):
         self.duration = sum(self.working_so_line_ids.mapped('duration'))
         # Old Code
@@ -157,6 +165,9 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_assign_operator(self):
+        for line in self.order_line:
+            if line.line_state_ws and line.line_state_ws == 'progress':
+                raise ValidationError(_('You cannot able to Re-assign operator while product still in progress'))
         view = (self.env.ref('ping_modifier_sales.select_operator_form_view')).id
         return {
             'name': 'Assign Operator',
@@ -168,6 +179,7 @@ class SaleOrder(models.Model):
             'context':{'default_operator_bool':True},
             'type': 'ir.actions.act_window',
         }
+
 
 
     @api.multi
@@ -237,43 +249,50 @@ class SaleOrder(models.Model):
             return res
 
 
-    @api.multi
-    def working_so_modifications(self):
-        if self.state_ws == 'pending':
-            self.state_ws = 'progress'
-        self.env['working.so.line'].create({
-            'so_id': self.id,
-            'operator_id':self.operator_id.id,
-            'start_time': datetime.today(),
-        })
+    # @api.multi
+    # def working_so_modifications(self):
+    #     if self.state_ws == 'pending':
+    #         self.state_ws = 'progress'
+    #     self.env['working.so.line'].create({
+    #         'so_id': self.id,
+    #         'operator_id':self.operator_id.id,
+    #         'start_time': datetime.today(),
+    #     })
 
     @api.multi
     def pause_section(self):
         if self.state_ws == 'progress':
             self.state_ws = 'paused'
-        working_so_lines = self.env['working.so.line'].search([])
-        working_so_lines.sorted(key=lambda r: r.start_time)
-        if working_so_lines:
-            working_so_lines[-1].update({'end_time': datetime.today()})
+        for line in self.order_line:
+            line.action_done_working()
+        # working_so_lines = self.env['working.so.line'].search([])
+        # working_so_lines.sorted(key=lambda r: r.start_time)
+        # if working_so_lines:
+        #     for line in working_so_lines:
+        #         line.update({'end_time': datetime.today()})
+                # working_so_lines[-1].update({'end_time': datetime.today()})
 
     @api.multi
     def complete_section(self):
-        working_so_lines = self.env['working.so.line'].search([])
-        working_so_lines.sorted(key=lambda r: r.start_time)
-        if working_so_lines and not working_so_lines[-1].end_time:
-            working_so_lines[-1].update({'end_time': datetime.today()})
+        # working_so_lines = self.env['working.so.line'].search([])
+        # working_so_lines.sorted(key=lambda r: r.start_time)
+        # if working_so_lines and not working_so_lines[-1].end_time:
+        #     working_so_lines[-1].update({'end_time': datetime.today()})
+        for line in self.order_line:
+            if line.line_state_ws == 'progress':
+                raise ValidationError(_('Sale Order still inprogress, please make sure all the process are completed'))
         self.state_ws = 'completed'
         self.operator_id.compute_count_confirmed_orders_today()
 
     @api.multi
     def start_section(self):
-        if self.state_ws == 'paused':
+        if self.state_ws in ['paused', 'pending']:
             self.state_ws = 'progress'
-        self.env['working.so.line'].create({
-            'so_id': self.id,
-            'start_time': datetime.today(),
-            'operator_id': self.operator_id.id,
-        })
+        # self.env['working.so.line'].create({
+        #     'so_id': self.id,
+        #     'start_time': datetime.today(),
+        #     'operator_id': self.operator_id.id,
+        # })
 
     @api.multi
     def action_active_users(self):
@@ -307,3 +326,59 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).create(vals)
         return res
 
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    current_qty = fields.Float(string='Current Qty')
+    line_state_ws = fields.Selection([
+        ('progress', 'Progress'),
+        ('done', 'Done')
+    ], default='done', string='Working Status')
+
+
+    @api.multi
+    def _prepare_invoice_line(self, qty):
+        if not self.current_qty==0.0:
+            qty = self.current_qty
+        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+        return res
+
+    def action_start_working(self):
+        if not self.order_id.state_ws == 'progress':
+            self.order_id.state_ws = 'progress'
+        if not self.line_state_ws or not self.line_state_ws == 'progress':
+            self.line_state_ws = 'progress'
+        self.env['working.so.line'].create({
+            'so_id': self.order_id.id,
+            'line_id': self.id,
+            'start_time': datetime.today(),
+            'operator_id': self.order_id.operator_id.id,
+        })
+
+
+    
+    def action_done_working(self):
+        working_so_lines = self.env['working.so.line'].search([('line_id', '=', self.id)])
+        working_so_lines.sorted(key=lambda r: r.start_time)
+        if working_so_lines and not working_so_lines[-1].end_time:
+            working_so_lines[-1].update({'end_time': datetime.today()})
+        self.line_state_ws = 'done'
+        
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id', 'current_qty')
+    def _compute_amount(self):
+        """
+        Compute the amounts of the SO line.
+        """
+        for line in self:
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            if not line.current_qty == 0.0:
+                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.current_qty, product=line.product_id, partner=line.order_id.partner_shipping_id)
+            else:
+                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_shipping_id)
+            line.update({
+                'price_tax': taxes['total_included'] - taxes['total_excluded'],
+                'price_total': taxes['total_included'],
+                'price_subtotal': taxes['total_excluded'],
+            })
