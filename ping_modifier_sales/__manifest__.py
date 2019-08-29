@@ -24,6 +24,7 @@
         'views/workin_so_view.xml',
         'views/source_sequnce.xml',
         'views/res_partner_view.xml',
+        'wizard/current_qty_wiz_view.xml',
     ],
     "installable": True,
     "application": True,

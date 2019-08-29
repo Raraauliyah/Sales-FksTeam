@@ -23,15 +23,15 @@
 	                        type="object" class="btn-primary"
 	                        attrs="{'invisible': ['|',('state', '!=', 'sale'),('state_ws', '!=','pending')]}"/> -->
 
-                <button string="Start" name="start_section" attrs="{'invisible': ['|', ('state', '!=', 'sale'), ('state_ws', 'not in', ['pending', 'paused'])]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
-                <button string="Pause" name="pause_section" attrs="{'invisible': ['|', ('state', '!=', 'sale'), ('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
-                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ['progress','paused'])]}" type="object" class="oe_highlight"/><!-- groups="base.group_erp_manager" -->
+                <button string="Start" name="start_section" attrs="{'invisible': ['|', ('state', '!=', 'sale'), ('state_ws', 'not in', ['pending', 'paused'])]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
+                <button string="Pause" name="pause_section" attrs="{'invisible': ['|', ('state', '!=', 'sale'), ('state_ws', '!=', 'progress')]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
+                <button string="Complete" name="complete_section" attrs="{'invisible': [('state_ws', 'not in', ['progress','paused'])]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/><!-- groups="base.group_erp_manager" -->
             </xpath>
             <xpath expr="//field[@name='confirmation_date']" position="before">
                 <field name="cancel_date" states='cancel'/>
             </xpath>
             <xpath expr="//button[@name='action_cancel']" position="before">
-		        <button string="Re-assign Operator" name="action_assign_operator" attrs="{'invisible': ['|', ('state_ws', '=', 'completed'), ('state', '!=', 'sale')]}" type="object" class="oe_highlight" groups="ping_modifier_sales.group_assign_operator"/>
+		        <button string="Re-assign Operator" name="action_assign_operator" attrs="{'invisible': ['|', ('state_ws', '=', 'completed'), ('state', '!=', 'sale')]}" type="object" class="oe_highlight" groups="base.group_erp_manager"/>
             </xpath>
             <xpath expr="//notebook/page[2]" position="after">
                 <page string="Working Schedule">
@@ -60,9 +60,10 @@
         <field name="priority">32</field>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']//tree//field[last()]" position="after">
-                <field name="line_state_ws" invisible="1"/>
-                <button class="oe_highlight" name="action_start_working" attrs="{'invisible': ['|', ('line_state_ws','=','progress'), ('state', '!=', 'sale')]}" type="object" icon="fa-play" string="Start" groups="base.group_erp_manager"/>
-                <button class="oe_highlight" name="action_done_working" attrs="{'invisible': ['|', ('line_state_ws','=','done'), ('state', '!=', 'sale')]}" type="object" icon="fa-check" string="Done"/>
+                <field name="related_state_ws" invisible="1"/>
+                <field name="line_state_ws" invisible="0" readonly="1"/>
+                <button class="oe_highlight" name="action_start_working" attrs="{'invisible': ['|', ('line_state_ws', 'in', ['progress', 'done']), ('state', '!=', 'sale')]}" type="object" icon="fa-play" string="Start" groups="ping_modifier_sales.group_assign_operator"/>
+                <button class="oe_highlight" name="action_done_working" attrs="{'invisible': ['|', ('line_state_ws', '!=', 'progress'), ('state', '!=', 'sale')]}" type="object" icon="fa-check" string="Done" groups="ping_modifier_sales.group_assign_operator"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
                 <field name="current_qty" readonly="1"/>

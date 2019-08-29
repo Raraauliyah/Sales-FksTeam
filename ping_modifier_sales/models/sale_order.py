@@ -31,7 +31,7 @@ class SaleOrder(models.Model):
     state_ws = fields.Selection([
         ('pending', 'Pending'),
         ('paused', 'Paused'),
-        ('progress', 'Progress'),
+        ('progress', 'In Progress'),
         ('completed', 'Completed')
     ], default='pending',string='Working Status')
 
@@ -264,7 +264,11 @@ class SaleOrder(models.Model):
         if self.state_ws == 'progress':
             self.state_ws = 'paused'
         for line in self.order_line:
-            line.action_done_working()
+            line.write({'line_state_ws': 'partial'})
+            working_so_lines = self.env['working.so.line'].search([('line_id', '=', line.id)]).sorted(key=lambda r: r.start_time)
+            if working_so_lines and not working_so_lines[-1].end_time:
+                working_so_lines[-1].update({'end_time': datetime.today()})
+
         # working_so_lines = self.env['working.so.line'].search([])
         # working_so_lines.sorted(key=lambda r: r.start_time)
         # if working_so_lines:
@@ -279,8 +283,8 @@ class SaleOrder(models.Model):
         # if working_so_lines and not working_so_lines[-1].end_time:
         #     working_so_lines[-1].update({'end_time': datetime.today()})
         for line in self.order_line:
-            if line.line_state_ws == 'progress':
-                raise ValidationError(_('Sale Order still inprogress, please make sure all the process are completed'))
+            if line.line_state_ws != 'done':
+                raise ValidationError(_('Sale Order still in progress, please make sure all the process are completed'))
         self.state_ws = 'completed'
         self.operator_id.compute_count_confirmed_orders_today()
 
@@ -331,11 +335,25 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+
+    related_state_ws = fields.Selection([
+        ('pending', 'Pending'),
+        ('paused', 'Paused'),
+        ('progress', 'Progress'),
+        ('completed', 'Completed')
+    ],
+    default='pending',
+    string='Order Working Status',
+    related='order_id.state_ws',
+    )
+
     current_qty = fields.Float(string='Current Qty')
     line_state_ws = fields.Selection([
-        ('progress', 'Progress'),
+        ('pending', 'Pending'),
+        ('progress', 'In Progress'),
+        ('partial', 'Partially Done'),
         ('done', 'Done')
-    ], default='done', string='Working Status')
+    ], default='pending', string='Status')
 
 
     @api.multi
@@ -348,7 +366,7 @@ class SaleOrderLine(models.Model):
     def action_start_working(self):
         if not self.order_id.state_ws == 'progress':
             self.order_id.state_ws = 'progress'
-        if not self.line_state_ws or not self.line_state_ws == 'progress':
+        if self.line_state_ws in ['pending', 'partial']:
             self.line_state_ws = 'progress'
         self.env['working.so.line'].create({
             'so_id': self.order_id.id,
@@ -356,15 +374,19 @@ class SaleOrderLine(models.Model):
             'start_time': datetime.today(),
             'operator_id': self.order_id.operator_id.id,
         })
-
-
     
     def action_done_working(self):
-        working_so_lines = self.env['working.so.line'].search([('line_id', '=', self.id)])
-        working_so_lines.sorted(key=lambda r: r.start_time)
-        if working_so_lines and not working_so_lines[-1].end_time:
-            working_so_lines[-1].update({'end_time': datetime.today()})
-        self.line_state_ws = 'done'
+        view = (self.env.ref('ping_modifier_sales.current_qty_view')).id
+        return {
+            'name': 'Fill Current QTY',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'current.qty',
+            'view_id': view,
+            'target': 'new',
+            'context':{'default_orderline_id':self.id},
+            'type': 'ir.actions.act_window',
+        }
         
     @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id', 'current_qty')
     def _compute_amount(self):

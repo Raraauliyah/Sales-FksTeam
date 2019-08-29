@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="current_qty_view">
+            <field name="name">current.qty.view.form</field>
+            <field name="model">current.qty</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="current_qty" required="1" autofocus="autofocus"/>
+                    </group>
+                    <footer>
+                        <button name="apply" string="Apply" type="object" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
