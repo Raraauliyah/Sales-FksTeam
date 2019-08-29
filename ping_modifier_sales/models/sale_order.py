@@ -404,3 +404,16 @@ class SaleOrderLine(models.Model):
                 'price_total': taxes['total_included'],
                 'price_subtotal': taxes['total_excluded'],
             })
+
+
+class SaleAdvancePaymentInv(models.TransientModel):
+    _inherit = "sale.advance.payment.inv"
+
+    @api.multi
+    def create_invoices(self):
+        active_id = self.env.context.get('active_id', False)
+        order = self.env['sale.order'].browse(active_id)
+        for line in order.order_line:
+            if line.state != 'done':
+                raise ValidationError(_('You cannot able to create an invoice if the status is still in progress'))
+        return super(SaleAdvancePaymentInv, self).create_invoices()
