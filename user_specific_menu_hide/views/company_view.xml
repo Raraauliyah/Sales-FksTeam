@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_res_company_hide_menu_form" model="ir.ui.view">
+            <field name="name">res.company.hide.menu.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr='//form/sheet/notebook/page[last()]' position="after">
+                    <page string="Hide Menus" groups="user_specific_menu_hide.user_specific_menu_hide">
+                        <field name="hidden_menus_ids" nolabel="1">
+                            <tree string="Hidden Menus for Users" editable="bottom">
+                                <field name="menu_id" required="1" domain="[('parent_id', '=', False)]" widget="selection"/>
+                                <field name="user_ids" widget="many2many_tags" required="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
