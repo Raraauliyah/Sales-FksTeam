@@ -21,11 +21,13 @@ class CurrentQTY(models.TransientModel):
 
             if line.product_uom_qty > (float(line.current_qty) + float(self.current_qty)):
                 state = 'partial'
+                line.order_id.is_user_working = True
             else:
                 state = 'done'
                 open_lines = sol.search([('order_id', '=', line.order_id.id), ('line_state_ws', '!=', 'done')])
                 if open_lines and len(open_lines) == 1:
                     line.order_id.state_ws = 'completed'
+                    line.order_id.is_user_working = False
 
             return line.write({
                 'current_qty': float(line.current_qty) + float(self.current_qty),

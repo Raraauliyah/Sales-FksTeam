@@ -66,13 +66,14 @@ class SaleOrder(models.Model):
             'target':'main',
         }
 
+    @api.depends('working_so_line_ids')
     def _compute_is_user_working(self):
         """ Checks whether the current user is working """
         for order in self:
             working_so_line_ids = order.working_so_line_ids.filtered(
                 lambda line:
                 (line.operator_id.id == self.env.user.id) and
-                (not line.end_time)
+                (not line.end_time or line.line_id.line_state_ws in ['partial'])
             )
             print("working_so_line_ids ",working_so_line_ids)
             if working_so_line_ids:
@@ -263,6 +264,7 @@ class SaleOrder(models.Model):
     def pause_section(self):
         if self.state_ws == 'progress':
             self.state_ws = 'paused'
+            self.is_user_working = False
         for line in self.order_line:
             line.write({'line_state_ws': 'partial'})
             working_so_lines = self.env['working.so.line'].search([('line_id', '=', line.id)]).sorted(key=lambda r: r.start_time)
