@@ -1,0 +1,22 @@
+<odoo>
+  <data>
+    <act_window id="act_open_create_mo"
+            multi="True"
+            key2="client_action_multi" name="Create Manufacturing Order"
+            res_model="wizard.create.mo" src_model="product.template"
+            view_mode="form" target="new" view_type="form" />
+
+    <record id="product_form_extented" model="ir.ui.view">
+    	<field name="name">product.template.form.extended</field>
+    	<field name="model">product.template</field>
+    	<field name="inherit_id" ref="product.product_template_only_form_view"/>
+    	<field name="arch" type="xml">
+    		<field name="type" position="after">
+                <field name="store_virtual_qty" invisible="1"/>
+                <field name="store_incoming_qty" invisible="1"/>
+    			<field name="store_outgoing_qty" invisible="1"/>
+    		</field>
+    	</field>
+    </record>
+  </data>
+</odoo>

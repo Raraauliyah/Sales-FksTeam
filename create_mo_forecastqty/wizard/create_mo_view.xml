@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="act_open_create_mo" model="ir.actions.act_window">
+            <field name="name">Forcasted Qty</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.create.mo</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="form_open_create_mo_view" model="ir.ui.view">
+            <field name="name">view_vit_efaktur_pk_form_extend</field>
+            <field name="model">wizard.create.mo</field>
+            <field name="type">form</field>
+            <!-- <field name="priority" eval="8"/> -->
+            <field name="arch" type="xml">
+                <form string="Forcasted Qty">
+
+                    <sheet>
+                        <group>
+                            <group colspan="4" col="2">
+                                <field name="qty_onhand"/>
+                                <field name="outgoing_qty"/>
+                                <field name="forecasted_qty"/>
+                                <field name="has_bom" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Confirm" name="confirm_button" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel" />
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
