@@ -1,23 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-    <t t-name="CreateSaleOrder">
+    <!--<t t-name="CreateSaleOrder">-->
         <!--<span class="control-button create_sale_order">-->
             <!--Confirm-->
         <!--</span>-->
-        <button class='button create_sale_order' id="create_sale_order" style="height:162px;padding: 5px 50px;margin-bottom: 20px;margin-left:100px" >
-            <div class='pay-circle'>
-                <i class='fa fa-chevron-right' />
-            </div>
-            Confirm
-        </button>
+        <!--<button class='button create_sale_order' id="create_sale_order" style="height:162px;padding: 5px 50px;margin-bottom: 20px;margin-left:100px" >-->
+            <!--<div class='pay-circle'>-->
+                <!--<i class='fa fa-chevron-right' />-->
+            <!--</div>-->
+            <!--Confirm-->
+        <!--</button>-->
+    <!--</t>-->
+
+    <t t-extend="PaymentScreen-Numpad">
+        <t t-jquery="div[class='numpad']" t-operation="replace">
+        </t>
+    </t>
+
+    <t t-extend="PaymentScreen-Paymentmethods">
+        <t t-jquery="div[class='paymentmethods']" t-operation="replace">
+        </t>
     </t>
 
     <t t-extend="ActionpadWidget">
         <t t-jquery="div[class='actionpad']" t-operation="replace">
+            <t t-name="ActionpadWidget">
+                <div class="actionpad">
+                    <button t-attf-class='button set-customer #{ ( widget.pos.get_client() and widget.pos.get_client().name.length > 10) ? "decentered" : "" }' >
+                        <i class='fa fa-user' />
+                        <t t-if="widget.pos.get_client()">
+                            <t t-esc="widget.pos.get_client().name" />
+                        </t>
+                        <t t-if="!widget.pos.get_client()">
+                            Customer
+                        </t>
+                    </button>
+                    <button class='button create_sale_order' id="create_sale_order" style="height:162px;padding: 5px 50px;" >
+                        <div class='pay-circle'>
+                            <i class='fa fa-chevron-right' />
+                        </div>
+                        Confirm
+                    </button>
+                </div>
+            </t>
         </t>
     </t>
     <t t-extend="NumpadWidget">
         <t t-jquery=".numpad" t-operation="replace">
+            <div class="numpad">
+                <button class="input-button number-char">1</button>
+                <button class="input-button number-char">2</button>
+                <button class="input-button number-char">3</button>
+                <button class="mode-button" data-mode='quantity'>Qty</button>
+                <br />
+                <button class="input-button number-char">4</button>
+                <button class="input-button number-char">5</button>
+                <button class="input-button number-char">6</button>
+                <!--<button class="mode-button" data-mode='discount'>Disc</button>-->
+                <br />
+                <button class="input-button number-char">.</button>
+                <button class="input-button number-char">7</button>
+                <button class="input-button number-char">8</button>
+                <button class="input-button number-char">9</button>
+                <!--<button class="mode-button" data-mode='price'>Price</button>-->
+                <br />
+                <!--<button class="input-button numpad-minus" >+/-</button>-->
+
+                <button class="input-button numpad-backspace">
+                    <img style="pointer-events: none;" src="/point_of_sale/static/src/img/backspace.png" width="24" height="21" />
+                </button>
+                <button class="input-button number-char" style="margin-left:54px;border-left: 1px solid;border-color: #bfbfbf;">0</button>
+            </div>
+        </t>
+    </t>
+
+    <t t-extend="PaymentScreenWidget">
+        <t t-jquery="div[class='top-content']" t-operation="replace">
+            <div class='top-content'>
+                <span class='button back'>
+                    <i class='fa fa-angle-double-left'></i>
+                    Back
+                </span>
+                <h1>Payment</h1>
+                <span class='button next_order highlight' style="right: 0px;margin-right: 16px;">
+                    Create Order
+                    <i class='fa fa-angle-double-right'></i>
+                </span>
+            </div>
         </t>
     </t>
 

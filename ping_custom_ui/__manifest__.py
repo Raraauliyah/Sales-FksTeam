@@ -12,6 +12,7 @@
     'depends': ['base','point_of_sale'],
     "data": [
         'views/pos_create_sale_order.xml',
+        'views/point_of_sale_report.xml',
     ],
     'qweb': [
             'static/src/xml/pos.xml'

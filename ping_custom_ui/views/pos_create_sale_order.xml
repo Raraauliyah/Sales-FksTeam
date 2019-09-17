@@ -4,6 +4,7 @@
         <template id="assets_backend" name="pos_custom_sale_order assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <script type="text/javascript" src="/ping_custom_ui/static/src/js/pos.js"/>
+                <script type="text/javascript" src="/ping_custom_ui/static/src/js/model.js"/>
                 <link rel="stylesheet" href="/ping_custom_ui/static/src/css/style.css" />
             </xpath>
         </template>

@@ -13,28 +13,27 @@ class SaleOrder(models.Model):
         values = {}
         partner_obj = self.env['res.partner']
 
-
-        partner_id = partner_obj.search([('name','=','pos customer')],limit=1)
-        if not partner_id:
-            partner_id = partner_obj.create({'name':'pos customer'})
-
-
-
-        values.update({
-            'partner_id':partner_id.id,
-            'date_order': datetime.now(),
-
-        })
         orderline = []
         for line in lines:
-            orderline.append((0,0,{
+            if line.get('name'):
+                partner_id = partner_obj.search([('name', '=', line.get('name'))], limit=1)
+                if not partner_id:
+                    partner_id = partner_obj.create({'name': line.get('name')})
+                if partner_id:
+                    values.update({
+                        'partner_id': partner_id.id,
+                    })
+            else:
+                orderline.append((0, 0, {
                 'product_id': line.get('product_id'),
-                'price_unit': line.get('price_unit'),
-                'product_uom_qty': line.get('qty'),
-            }))
+                              'price_unit': line.get('price_unit'),
+                                            'product_uom_qty': line.get('qty'),
+                }))
+
 
         values.update({
             'order_line': orderline,
+            'date_order':datetime.now(),
         })
         if values:
             sale_order_id = self.create(values)
