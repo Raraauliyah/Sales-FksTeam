@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="sale_order_form_view_inherit">
+            <field name="name">sale.order.form.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_shipping_id" position="after">
+                    <field name="customer_po"/>
+                    <field name="stuffing_date"/>
+                    <field name="etd"/>
+                    <field name="eta"/>
+                    <field name="total_cbm"/>
+                </field>
+                <field name="payment_term_id" position="after">
+                    <field name="port_destination"/>
+                    <field name="deadline_date"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
+                </field>
+                <xpath expr="//field[@name='order_line']/form/group/group/field[@name='price_unit']" position="after">
+                    <field name="pcs"/>
+                    <field name="qty_div_carton"/>
+                    <field name="sleeve_qty_carton"/>
+                    <field name="sleeve_type"/>
+                    <field name="case_qty"/>
+                    <field name="nett"/>
+                    <field name="gross"/>
+                    <field name="cbm"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                    <field name="pcs"/>
+                    <field name="qty_div_carton"/>
+                    <field name="sleeve_qty_carton"/>
+                    <field name="sleeve_type"/>
+                    <field name="case_qty"/>
+                    <field name="nett"/>
+                    <field name="gross"/>
+                    <field name="cbm"/>
+                </xpath>
+            </field>
+    </record>
+    <record model="ir.ui.view" id="view_quotation_tree_tree_inherit">
+            <field name="name">sale.order.form.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="replace">
+                    <field name="total_cbm"/>
+                </field>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_order_tree_view_inherit">
+            <field name="name">sale.order.form.view</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="user_id" position="replace">
+                    <field name="total_cbm"/>
+                </field>
+            </field>
+    </record>
+</odoo>
