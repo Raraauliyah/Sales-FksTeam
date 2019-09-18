@@ -25,20 +25,47 @@ class WizardCreateMO(models.Model):
 			return rec
 
 
+	# @api.multi
+	# def confirm_button(self):
+	# 	if self._context.get('active_id'):
+	# 		mo_id = self.env['product.template'].browse(self._context.get('active_id'))
+	# 		if self.has_bom:
+	# 			mo_obj = self.env['mrp.production']
+	# 			for bom in mo_id.bom_ids:
+	# 				mo = mo_obj.create({'product_id': mo_id.product_variant_id.id, 
+	# 					                'product_qty': abs(self.forecasted_qty), 
+	# 					                'bom_id': bom.id, 
+	# 					                'date_planned_start':fields.datetime.now(),
+	# 					                'product_uom_id': mo_id.uom_id.id})
+	# 				a = mo_id.write({'virtual_available': abs(self.forecasted_qty)})
+	# 		else:
+	# 			raise ValidationError(_("Product doesn't have BoM!"))
+
+
+
+
 	@api.multi
 	def confirm_button(self):
 		if self._context.get('active_id'):
 			mo_id = self.env['product.template'].browse(self._context.get('active_id'))
 			if self.has_bom:
 				mo_obj = self.env['mrp.production']
-				mo = mo_obj.create({'product_id': mo_id.product_variant_id.id, 
-					                'product_qty': abs(self.forecasted_qty), 
-					                'bom_id': mo_id.bom_ids.id, 
-					                'date_planned_start':fields.datetime.now(),
-					                'product_uom_id': mo_id.uom_id.id})
+				for bom in mo_id.bom_ids:
+					for bom_line in bom.bom_line_ids:
+						if len(bom_line.product_id.bom_ids) >= 1:
+							for bom_bom in bom_line.product_id.bom_ids:
+								bom_mo = mo_obj.create({'product_id': bom_line.product_id.id,
+														'product_qty': bom_line.product_qty * abs(self.forecasted_qty),
+														'bom_id': bom_bom.id,
+														'product_uom_id': bom_line.product_uom_id.id}) 
+					mo = mo_obj.create({'product_id': mo_id.product_variant_id.id, 
+						                'product_qty': abs(self.forecasted_qty), 
+						                'bom_id': bom.id, 
+						                'date_planned_start':fields.datetime.now(),
+						                'product_uom_id': mo_id.uom_id.id})
 
-				a = mo_id.write({'virtual_available': abs(self.forecasted_qty)})
+					a = mo_id.write({'virtual_available': abs(self.forecasted_qty)})
+			elif self.forecasted_qty > 0:
+				raise ValidationError(_("Forecast Qty is positive!"))
 			else:
 				raise ValidationError(_("Product doesn't have BoM!"))
-
-		
