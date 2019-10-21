@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Create MO Forecastqty",
+    'name': "Generate Forecasted to Quotation",
 
     'summary': """
-        create MO for forecasted QTY""",
+        Summary of the module's purpose, used as when Quotation will create, at that time Forecasted qty will updated.
+        """,
 
     'description': """
-        Long description of module's purpose to create MO for forecasted QTY
+        Long description of module's purpose when Quotation will create, at that time Forecasted qty will updated.
     """,
 
     'author': "Hashmicro / Jeel",
@@ -15,17 +16,15 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/odoo/addons/base/module/module_data.xml
     # for the full list
-    'category': 'Sales',
-    'version': '0.4',
+    'category': 'Uncategorized',
+    'version': '0.2',
 
     # any module necessary for this one to work correctly
-    'depends': ['sale', 'mrp'],
+    'depends': ['sale', 'mrp', 'forecasted_quantity_breakdown'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
-        'wizard/create_mo_view.xml',
+        # 'security/ir.model.access.csv',
         'views/views.xml',
-        'report/sale_report_inherit_view.xml',
     ],
 }

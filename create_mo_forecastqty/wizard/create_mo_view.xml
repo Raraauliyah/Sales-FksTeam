@@ -22,9 +22,11 @@
                     <sheet>
                         <group>
                             <group colspan="4" col="2">
-                                <field name="qty_onhand"/>
-                                <field name="outgoing_qty"/>
-                                <field name="forecasted_qty"/>
+                                <field name="qty_onhand" readonly="1"/>
+                                <field name="outgoing_qty" readonly="1"/>
+                                <field name="forecasted_qty" readonly="1"/>
+                                <field name="qty_to_mo"/>
+                                <field name="total_qty" invisible="1"/>
                                 <field name="has_bom" invisible="1"/>
                             </group>
                         </group>
@@ -37,6 +39,5 @@
                 </form>
             </field>
         </record>
-
     </data>
 </odoo>
